@@ -1,15 +1,16 @@
 version: 2.1
 
-orb:
+orbs:
   slack: circleci/slack@4.9.3
 
- commands:
+
+commands:
   notify_on_failure:
     steps:
       - slack/notify:
-        event: fail
-        channel: cicd-pipeline
-        template: basic_fail_1
+          event: fail
+          channel: cicd-pipeline
+          template: basic_fail_1
 #   destroy-environment:
 #     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
 #     parameters:
@@ -58,7 +59,7 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-deps
-      -   notify_on_failure
+      - notify_on_failure
 
   build-backend:
     docker:
@@ -70,13 +71,13 @@ jobs:
       - run:
           name: Back-end build
           command: |
-             cd backend
-             npm install
-             npm run build
+            cd backend
+            npm install
+            npm run build
       - save_cache:
           paths: [backend/node_modules]
           key: backend-deps
-      -   notify_on_failure
+      - notify_on_failure
 
   test-frontend:
     docker:
@@ -88,10 +89,10 @@ jobs:
       - run:
           name: Front-end Unit Test
           command: |
-             cd frontend
-             npm install
-             npm test
-      -   notify_on_failure
+            cd frontend
+            npm install
+            npm test
+      - notify_on_failure
                 
   test-backend:
     docker:
@@ -101,13 +102,13 @@ jobs:
       - restore_cache:
           keys: [backend-deps]
       - run:
-          name: Back-end Unit Test
+          name: Back-end unit test
           command: |
-             cd backend
-             npm install
-             npm test
-      -   notify_on_failure
-
+            cd backend
+            npm install
+            npm test
+      - notify_on_failure
+         
   scan-frontend:
     docker:
       - image: cimg/node:13.8.0
@@ -118,14 +119,15 @@ jobs:
       - run:
           name: Front-end scan
           command: |
-             cd frontend
-             npm install
-             npm audit fix --force --audit-level=critical
-             npm audit --audit-level=critical
-      -   notify_on_failure
+            cd frontend
+            npm install
+            npm audit fix --force --audit-level=critical
+            npm audit --audit-level=critical
+      - notify_on_failure
+
   scan-backend:
     docker:
-       - image: cimg/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -133,12 +135,12 @@ jobs:
       - run:
           name: Back-end scan
           command: |
-             cd backend
-             npm install
-             npm audit fix --force --audit-level=critical
-             npm audit fix --force --audit-level=critical
-             npm audit --audit-level=critical
-      -   notify_on_failure
+            cd backend
+            npm install
+            npm audit fix --force --audit-level=critical
+            npm audit fix --force --audit-level=critical
+            npm audit --audit-level=critical
+      - notify_on_failure
 #   deploy-infrastructure:
 #     docker:
 #       # Docker image here that supports AWS CLI
@@ -310,9 +312,8 @@ jobs:
       - slack/notify:
           event: pass
           channel: cicd-pipeline
-          template: success_tagged_deployment_1  
+          template: success_tagged_deployment_1
 
-      
 workflows:
   default:
     jobs:
@@ -326,7 +327,7 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
-  - notify_on_success:
+      - notify_on_success:
           requires:
             - test-frontend
             - test-backend
