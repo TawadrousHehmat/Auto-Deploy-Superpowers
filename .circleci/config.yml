@@ -258,7 +258,7 @@ jobs:
             else
                 echo "failed"
             fi
-      - detroy-environment
+      - destroy-environment
       - revert-migrations
 
   # deploy-frontend:
