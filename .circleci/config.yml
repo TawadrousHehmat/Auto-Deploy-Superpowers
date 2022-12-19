@@ -439,7 +439,6 @@ jobs:
 #         event: pass
 #         channel: cicd
 #         template: success_tagged_deployment_1
-
 workflows:
   default:
     jobs:
@@ -459,6 +458,8 @@ workflows:
           filters:
             branches:
               only: [master]
+
+
 
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
