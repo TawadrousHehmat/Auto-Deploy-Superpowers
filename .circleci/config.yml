@@ -254,7 +254,7 @@ jobs:
             if grep -q "has been executed successfully." migration_output.txt
             then
               echo "success"
-              touch ~/project/.circleci/outputs/db_migration_success
+              touch ~/Final Project/.circleci/outputs/db_migration_success
             else
                 echo "failed"
             fi
