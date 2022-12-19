@@ -41,20 +41,20 @@ commands:
 #           channel: cicd
 #           template: basic_fail_1
 
-    # destroy-environment:
-    #   description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    #   parameters:
-    #     Workflow_ID:
-    #       type: string
-    #       default: ${CIRCLE_WORKFLOW_ID:0:7}
-    #   steps:
-    #     - run:
-    #         name: Destroy environments
-    #         when: on_fail
-    #         command: |
-    #           aws cloudformation delete-stack --stack-name project-backend-<< parameters.Workflow_ID >>
-    #           aws s3 rm s3://project-<<parameters.Workflow_ID>> --recursive
-    #           aws cloudformation delete-stack --stack-name project-frontend-<< parameters.Workflow_ID >>
+    destroy-environment:
+      description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+      parameters:
+        Workflow_ID:
+          type: string
+          default: ${CIRCLE_WORKFLOW_ID:0:7}
+      steps:
+        - run:
+            name: Destroy environments
+            when: on_fail
+            command: |
+              aws cloudformation delete-stack --stack-name tedo-backend-<< parameters.Workflow_ID >>
+              aws s3 rm s3://tedo-<<parameters.Workflow_ID>> --recursive
+              aws cloudformation delete-stack --stack-name tedo-frontend-<< parameters.Workflow_ID >>
 
     # revert-migrations:
     #   description: Revert the last migration if successfully run in the current workflow.
@@ -170,7 +170,7 @@ jobs:
             npm install
             npm audit fix --force --audit-level=critical
             npm audit fix --force --audit-level=critical
-          # npm audit --audit-level=critical
+            #npm audit --audit-level=critical
       # - notify_on_failure
 
   deploy-infrastructure:
@@ -184,8 +184,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              --tags project=project \
-              --stack-name "project-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=tedo \
+              --stack-name "tedo-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
               
       - run:
@@ -193,8 +193,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --tags project=project \
-              --stack-name "project-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=tedo \
+              --stack-name "tedo-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
               
       - run:
@@ -439,6 +439,7 @@ jobs:
 #         event: pass
 #         channel: cicd
 #         template: success_tagged_deployment_1
+
 workflows:
   default:
     jobs:
@@ -463,9 +464,6 @@ workflows:
           filters:
             branches:
               only: [master]
-
-
-
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
       # - run-migrations:
