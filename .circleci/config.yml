@@ -66,8 +66,8 @@ commands:
             name: Revert migrations
             when: on_fail
             command: |
-              cd ~/project/backend
-              if [[ -f "~/project/.circleci/outputs/db_migration_success" ]]; then
+              cd ~/Final Project/backend
+              if [[ -f "~/Final Project/.circleci/outputs/db_migration_success" ]]; then
                 npm i
                 npm run migration:revert
               fi
