@@ -233,32 +233,86 @@ jobs:
 
   #     # Here's where you will add some code to rollback on failure
 
+  # run-migrations:
+  #   docker:
+  #     - image: circleci/node:13.8.0
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: ~/
+  #     - run:
+  #         name: Run DB migrations
+  #         command: |
+  #           cd backend
+  #           npm install
+  #           npm run migrations > migration_output.txt
+  #           cat migration_output.txt
+  #     - run:
+  #         name: Store migration result in a file.
+  #         command: |
+  #           cd backend
+  #           if grep -q "has been executed successfully." migration_output.txt
+  #           then
+  #             echo "success"
+  #             touch ~/Final Project/.circleci/outputs/db_migration_success
+  #           else
+  #               echo "failed"
+  #           fi
+  #     - destroy-environment
+  #     - revert-migrations
+
   run-migrations:
+
     docker:
+
       - image: circleci/node:13.8.0
+
     steps:
+
       - checkout
+
       - attach_workspace:
+
           at: ~/
+
       - run:
+
           name: Run DB migrations
+
           command: |
+
             cd backend
+
             npm install
+
             npm run migrations > migration_output.txt
+
             cat migration_output.txt
+
       - run:
+
           name: Store migration result in a file.
+
           command: |
+
             cd backend
+
             if grep -q "has been executed successfully." migration_output.txt
+
             then
+
               echo "success"
-              touch ~/Final Project/.circleci/outputs/db_migration_success
+
+              touch ~/project/.circleci/outputs/db_migration_success
+
             else
+
                 echo "failed"
+
             fi
-      - destroy-environment
+
+      - detroy-environment
+
       - revert-migrations
 
   # deploy-frontend:
