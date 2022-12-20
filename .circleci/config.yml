@@ -55,22 +55,22 @@ commands:
             aws s3 rm s3://tedo-<<parameters.Workflow_ID>> --recursive
             aws cloudformation delete-stack --stack-name tedo-frontend-<< parameters.Workflow_ID >>
 
-    revert-migrations:
-      description: Revert the last migration if successfully run in the current workflow.
-      parameters:
-        Workflow_ID:
-          type: string 
-          default: ${CIRCLE_WORKFLOW_ID:0:7}
-      steps:
-        - run:
-            name: Revert migrations
-            when: on_fail
-            command: |
-              cd ~/Final Project/backend
-              if [[ -f "~/Final Project/.circleci/outputs/db_migration_success" ]]; then
-                npm i
-                npm run migration:revert
-              fi
+  revert-migrations:
+    description: Revert the last migration if successfully run in the current workflow.
+    parameters:
+      Workflow_ID:
+        type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
+    steps:
+      - run:
+          name: Revert migrations
+          when: on_fail
+          command: |
+            cd ~/Final Project/backend
+            if [[ -f "~/Final Project/.circleci/outputs/db_migration_success" ]]; then
+              npm i
+              npm run migration:revert
+            fi
 
 jobs:
   build-frontend:
@@ -237,22 +237,19 @@ jobs:
     steps:
       - checkout
       - install_awscli
-      # - attach_workspace:
-      #     at: ~/
       - run:
           name: Run migrations
           command: |
             cd backend
             npm install
-            npm run migrations > migrations_dump.txt
-#            cat migration_output.txt
+            npm run migrations > migration_output.txt
+            cat migration_output.txt
       - run:
-          name: Send migration status to kvdb.io 
-          #Store migration result in a file.
+          name: send migration status to kvdb.io
           command: |
-            if grep -q "has been executed successfully." ~/Project Manual/backend/migrations_dump.txt
+            if grep -q "successfully." ~/project/backend/migrations_dump.txt
             then
-              curl https://kvdb.io/${KVDB_BUCKET}/migrations_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
+              curl https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       - destroy-environment
       - revert-migrations
