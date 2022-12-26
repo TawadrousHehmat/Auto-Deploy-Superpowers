@@ -67,7 +67,7 @@ commands:
           when: on_fail
           command: |
             cd ~/Project/backend
-            if [[ -f "~/Final Project/.circleci/outputs/db_migration_success" ]]; then
+            if [[ -f "~/Project/.circleci/outputs/db_migration_success" ]]; then
               npm i
               npm run migration:revert
             fi
