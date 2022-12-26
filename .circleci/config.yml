@@ -51,9 +51,9 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name tedo-backend-<< parameters.Workflow_ID >>
-            aws s3 rm s3://tedo-<<parameters.Workflow_ID>> --recursive
-            aws cloudformation delete-stack --stack-name tedo-frontend-<< parameters.Workflow_ID >>
+            aws cloudformation delete-stack --stack-name tedo-backend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws cloudformation delete-stack --stack-name tedo-frontend-${CIRCLE_WORKFLOW_ID:0:7}
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -66,7 +66,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            cd ~/Final Project/backend
+            cd ~/Project/backend
             if [[ -f "~/Final Project/.circleci/outputs/db_migration_success" ]]; then
               npm i
               npm run migration:revert
