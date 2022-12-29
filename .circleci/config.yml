@@ -152,7 +152,7 @@ jobs:
             cd frontend
             npm install
             npm audit fix --force --audit-level=critical
-            npm audit --audit-level=critical
+          #  npm audit --audit-level=critical
       # - notify_on_failure
 
   scan-backend:
@@ -169,7 +169,7 @@ jobs:
             npm install
             npm audit fix --force --audit-level=critical
             npm audit fix --force --audit-level=critical
-            #npm audit --audit-level=critical
+          # npm audit --audit-level=critical
       # - notify_on_failure
 
   deploy-infrastructure:
@@ -464,5 +464,4 @@ workflows:
           requires: [smoke-test]
       - cleanup:
           requires: [cloudfront-update]
-      
       
